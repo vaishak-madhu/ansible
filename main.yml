@@ -1,0 +1,57 @@
+- name: "Update and upgrade apt packages"
+
+  become: true
+
+  apt:
+
+    upgrade: 'yes'
+
+    update_cache: yes
+
+
+
+- name: "Installing dependencies"
+
+  apt:
+
+    pkg: [ ansible, git, nano, htop, iotop, expect, telnet, sudo, sshpass, man]
+
+    state: latest
+
+
+
+-  name: "Installing SSH"
+
+   apt: pkg=ssh state=latest
+
+
+
+- name: "Enable the root user to log on via SSH using a password"
+
+  replace:
+
+    dest: /etc/ssh/sshd_config
+
+    regexp: '#PermitRootLogin prohibit-password'
+
+    replace: 'PermitRootLogin yes' 
+
+    
+
+- name: Restart SSH
+
+  systemd:
+
+    state: restarted
+
+    daemon_reload: yes
+
+    name: ssh
+
+    enabled: yes    
+
+
+
+- debug:
+
+    msg: "Setup complete, please reboot this system before running any further playbooks."
